@@ -27,7 +27,10 @@ public class SimpleArtSource extends MuzeiArtSource {
     private static final String SOURCE_NAME = "MuzeiSimpleSource";
 
     private static final int ROTATE_TIME_MILLIS = 3 * 60 * 60 * 1000; // rotate every 3 hours
-    private static final String IMAGE_NAME ="background.png";
+    private static final String IMAGE_NAME ="background";
+    private static final String IMAGE_EXT =".jpeg";
+
+    private static int counter = 0;
 
     public SimpleArtSource() {
         super(SOURCE_NAME);
@@ -56,8 +59,9 @@ public class SimpleArtSource extends MuzeiArtSource {
         int radius;
         radius = 100;
         Paint paint = new Paint();
+        paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.WHITE);
+        paint.setColor(Color.BLACK);
         canvas.drawPaint(paint);
         // Use Color.parseColor to define HTML colors
         Random random = new Random();
@@ -73,12 +77,23 @@ public class SimpleArtSource extends MuzeiArtSource {
 
     @Override
     protected void onUpdate(int reason) {
-        Log.e("MuzeiSimpleSource", "test");
+        // Create the images directory
         File imagePath = new File(getFilesDir(), "images");
         imagePath.mkdirs();
-        File newFile = new File(imagePath, IMAGE_NAME);
+
+        // Clear old background image
+        File oldBackgroundImage = new File(imagePath, IMAGE_NAME + counter + IMAGE_EXT);
+        if (oldBackgroundImage.delete()) {
+            Log.d(TAG, "File deleted");
+        } else {
+            Log.d(TAG, "File not deleted");
+        }
+
+        // Need to supply new file b/c Muzei doesn't reload files
+        counter++;
+        File backgroundImage = new File(imagePath, IMAGE_NAME + counter + IMAGE_EXT);
         try {
-            OutputStream out = new FileOutputStream(newFile);
+            OutputStream out = new FileOutputStream(backgroundImage, false);
             WindowManager wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
             Display display = wm.getDefaultDisplay();
             Point size = new Point();
@@ -86,13 +101,13 @@ public class SimpleArtSource extends MuzeiArtSource {
             Bitmap bm = Bitmap.createBitmap(size.x, size.y, Bitmap.Config.ARGB_8888);
             Canvas c = new Canvas(bm);
             drawCircle(c);
-            Log.e("MuzeiSimpleSource", size.toString());
-            bm.compress(Bitmap.CompressFormat.PNG, 0, out);
+            bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
         } catch(IOException e) {
             Log.e(TAG, "Exception ", e);
         }
 
-        Uri imgUri = FileProvider.getUriForFile(getApplicationContext(), "ca.jdr23bc.muzeisimplesource.fileprovider", newFile);
+        // Pass image back to Muzei
+        Uri imgUri = FileProvider.getUriForFile(getApplicationContext(), "ca.jdr23bc.muzeisimplesource.fileprovider", backgroundImage);
         getApplicationContext().grantUriPermission("net.nurik.roman.muzei", imgUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         publishArtwork(new Artwork.Builder()
                 .title("circle")
