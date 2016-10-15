@@ -39,7 +39,8 @@ public class MainActivity extends Activity {
         protected void onDraw(Canvas canvas) {
             // TODO Auto-generated method stub
             super.onDraw(canvas);
-            SimpleArtSource.drawCircle(canvas);
+            PatternPainter pp = new PatternPainter(canvas);
+            pp.paint();
         }
 
         private class GestureListener extends GestureDetector.SimpleOnGestureListener {

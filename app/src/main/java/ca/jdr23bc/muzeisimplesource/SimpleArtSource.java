@@ -36,28 +36,6 @@ public class SimpleArtSource extends MuzeiArtSource {
         super(SOURCE_NAME);
     }
 
-//    public Color generateRandomColor(Color mix) {
-//        Random random = new Random();
-//        int red = random.nextInt(256);
-//        int green = random.nextInt(256);
-//        int blue = random.nextInt(256);
-//
-//        // mix the color
-//        if (mix != null) {
-//            red = (red + mix.getRed()) / 2;
-//            green = (green + mix.getGreen()) / 2;
-//            blue = (blue + mix.getBlue()) / 2;
-//        }
-//
-//        Color color = new Color(red, green, blue);
-//        return color;
-//    }
-
-    public static void drawCircle(Canvas canvas) {
-        PatternPainter pp = new PatternPainter(canvas);
-        pp.paintDots();
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -89,7 +67,8 @@ public class SimpleArtSource extends MuzeiArtSource {
             display.getSize(size);
             Bitmap bm = Bitmap.createBitmap(size.x, size.y, Bitmap.Config.ARGB_8888);
             Canvas c = new Canvas(bm);
-            drawCircle(c);
+            PatternPainter pp = new PatternPainter(c);
+            pp.paint();
             bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
         } catch(IOException e) {
             Log.e(TAG, "Exception ", e);
