@@ -6,7 +6,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 
 public class MainActivity extends Activity {
     /** Called when the activity is first created. */
@@ -17,9 +21,18 @@ public class MainActivity extends Activity {
     }
 
     public class MyView extends View {
+
+        GestureDetector gestureDetector;
+
         public MyView(Context context) {
             super(context);
             // TODO Auto-generated constructor stub
+            gestureDetector = new GestureDetector(context, new GestureListener(this));
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent e) {
+            return gestureDetector.onTouchEvent(e);
         }
 
         @Override
@@ -27,6 +40,32 @@ public class MainActivity extends Activity {
             // TODO Auto-generated method stub
             super.onDraw(canvas);
             SimpleArtSource.drawCircle(canvas);
+        }
+
+        private class GestureListener extends GestureDetector.SimpleOnGestureListener {
+
+            View v;
+
+            public GestureListener(View v) {
+                this.v = v;
+            }
+
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return true;
+            }
+
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                v.invalidate();
+
+                float x = e.getX();
+                float y = e.getY();
+
+                Log.d("Double Tap", "Tapped at: (" + x + "," + y + ")");
+
+                return true;
+            }
         }
     }
 }

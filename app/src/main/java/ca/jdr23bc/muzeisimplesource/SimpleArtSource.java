@@ -23,7 +23,7 @@ import com.google.android.apps.muzei.api.MuzeiArtSource;
 
 
 public class SimpleArtSource extends MuzeiArtSource {
-    private static final String TAG = "MuzeiSimpleSource";
+    public static final String TAG = "MuzeiSimpleSource";
     private static final String SOURCE_NAME = "MuzeiSimpleSource";
 
     private static final int ROTATE_TIME_MILLIS = 3 * 60 * 60 * 1000; // rotate every 3 hours
@@ -54,19 +54,8 @@ public class SimpleArtSource extends MuzeiArtSource {
 //    }
 
     public static void drawCircle(Canvas canvas) {
-        int x = canvas.getWidth();
-        int y = canvas.getHeight();
-        int radius;
-        radius = 100;
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(Color.BLACK);
-        canvas.drawPaint(paint);
-        // Use Color.parseColor to define HTML colors
-        Random random = new Random();
-        paint.setColor(Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256)));
-        canvas.drawCircle(x / 2, y / 2, radius, paint);
+        PatternPainter pp = new PatternPainter(canvas);
+        pp.paintDots();
     }
 
     @Override
