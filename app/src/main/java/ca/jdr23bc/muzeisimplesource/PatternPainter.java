@@ -70,6 +70,7 @@ public class PatternPainter {
         boolean sameColor = random.nextBoolean();
         if (sameColor) {
             p.setColor(colorScheme.getRandom());
+            p.setAlpha(random.nextInt(255));
         }
         boolean sameDir = random.nextBoolean();
         if (sameDir) {
@@ -84,6 +85,7 @@ public class PatternPainter {
         for (int i = 0; i < num; i++) {
             if (!sameColor) {
                 p.setColor(colorScheme.getRandom());
+                p.setAlpha(random.nextInt(255));
             }
             if (!sameDir) {
                 direction = directions[random.nextInt(2)];

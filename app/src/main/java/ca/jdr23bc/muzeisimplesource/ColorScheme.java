@@ -6,18 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static ca.jdr23bc.muzeisimplesource.Colour.ColorScheme.ColorSchemeAnalagous;
-import static ca.jdr23bc.muzeisimplesource.Colour.ColorScheme.ColorSchemeComplementary;
-import static ca.jdr23bc.muzeisimplesource.Colour.ColorScheme.ColorSchemeMonochromatic;
-import static ca.jdr23bc.muzeisimplesource.Colour.ColorScheme.ColorSchemeTriad;
-
 public class ColorScheme {
 
-    public List<Integer> colors = new ArrayList<Integer>();
+    public List<Integer> colors = new ArrayList<>();
+    Colour.ColorScheme csType;
 
     public ColorScheme(int rootColor) {
         colors.add(rootColor);
-        int[] ints = Colour.colorSchemeOfType(rootColor, ColorSchemeComplementary);
+        csType = Colour.getRandomScheme();
+        int[] ints = Colour.colorSchemeOfType(rootColor, csType);
         for (int index = 0; index < ints.length; index++) {
             colors.add(ints[index]);
         }

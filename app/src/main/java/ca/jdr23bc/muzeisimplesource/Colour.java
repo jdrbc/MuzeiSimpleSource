@@ -2,6 +2,9 @@ package ca.jdr23bc.muzeisimplesource;
 
 import android.graphics.Color;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 /**
  * The type Colour.
  */
@@ -14,6 +17,12 @@ public class Colour extends Color {
 
     public enum ColorDistanceFormula {
         ColorDistanceFormulaCIE76, ColorDistanceFormulaCIE94, ColorDistanceFormulaCIE2000
+    }
+
+    public static ColorScheme getRandomScheme() {
+        ColorScheme[] schemes = Colour.ColorScheme.values();
+        Random rand = new Random();
+        return schemes[rand.nextInt(schemes.length)];
     }
 
     // ///////////////////////////////////

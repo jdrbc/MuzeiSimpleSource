@@ -59,16 +59,16 @@ public class SimpleArtSource extends MuzeiArtSource {
         // Need to supply new file b/c Muzei doesn't reload files
         counter++;
         File backgroundImage = new File(imagePath, IMAGE_NAME + counter + IMAGE_EXT);
+        WindowManager wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        Bitmap bm = Bitmap.createBitmap(size.x, size.y, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bm);
+        PatternPainter pp = new PatternPainter(c);
+        pp.paint();
         try {
             OutputStream out = new FileOutputStream(backgroundImage, false);
-            WindowManager wm = (WindowManager) getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
-            Display display = wm.getDefaultDisplay();
-            Point size = new Point();
-            display.getSize(size);
-            Bitmap bm = Bitmap.createBitmap(size.x, size.y, Bitmap.Config.ARGB_8888);
-            Canvas c = new Canvas(bm);
-            PatternPainter pp = new PatternPainter(c);
-            pp.paint();
             bm.compress(Bitmap.CompressFormat.JPEG, 100, out);
         } catch(IOException e) {
             Log.e(TAG, "Exception ", e);
@@ -78,7 +78,7 @@ public class SimpleArtSource extends MuzeiArtSource {
         Uri imgUri = FileProvider.getUriForFile(getApplicationContext(), "ca.jdr23bc.muzeisimplesource.fileprovider", backgroundImage);
         getApplicationContext().grantUriPermission("net.nurik.roman.muzei", imgUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         publishArtwork(new Artwork.Builder()
-                .title("circle")
+                .title(pp.style.toString())
                 .byline("random background")
                 .imageUri(imgUri)
                 .build());
