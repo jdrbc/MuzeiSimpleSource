@@ -6,22 +6,37 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.Log;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
-import java.util.StringTokenizer;
 
 public class PatternPainter {
+    private static final List<Style> STYLES =
+            Collections.unmodifiableList(Arrays.asList(Style.values()));
+
+    public enum Style {
+        Lines, Dots
+    }
     Canvas canvas;
+    Style style;
     Random random = new Random();
     ColorScheme colorScheme;
 
     public PatternPainter(Canvas canvas) {
         this.canvas = canvas;
+        this.style = STYLES.get(random.nextInt(STYLES.size()));
     }
 
     public void paint() {
         int rootColor = Color.rgb(random.nextInt(256), random.nextInt(256), random.nextInt(256));
         this.colorScheme = new ColorScheme(rootColor);
-        paintLines();
+
+        if (style == Style.Lines) {
+            paintLines();
+        } else if (style == Style.Dots) {
+            paintDots();
+        }
     }
 
     public void paintDots() {
@@ -46,14 +61,36 @@ public class PatternPainter {
     public void paintLines() {
         fillBackground();
 
-        // TODO-jdr dynamically set these values based on canvas size or user params
-        int num = random.nextInt(9) + 1;
+        Paint p = new Paint();
+        p.setAntiAlias(true);
         int minWidth = 25;
         int maxWidth = 150;
+        String direction = "vertical";
         String[] directions = new String[] {"vertical", "horizontal"};
-        for (int i = 0; i < num; i++) {
-            String direction = directions[random.nextInt(2)];
+        boolean sameColor = random.nextBoolean();
+        if (sameColor) {
+            p.setColor(colorScheme.getRandom());
+        }
+        boolean sameDir = random.nextBoolean();
+        if (sameDir) {
+            direction = directions[random.nextInt(2)];
+        }
+        boolean sameWeight = random.nextBoolean();
+        if (sameWeight) {
+            p.setStrokeWidth(random.nextFloat() * (maxWidth - minWidth) + minWidth);
+        }
 
+        int num = random.nextInt(9) + 1;
+        for (int i = 0; i < num; i++) {
+            if (!sameColor) {
+                p.setColor(colorScheme.getRandom());
+            }
+            if (!sameDir) {
+                direction = directions[random.nextInt(2)];
+            }
+            if (!sameWeight) {
+                p.setStrokeWidth(random.nextFloat() * (maxWidth - minWidth) + minWidth);
+            }
             Point start = new Point();
             Point end = new Point();
             if (direction == "vertical") {
@@ -67,11 +104,6 @@ public class PatternPainter {
                 end.y = random.nextInt(canvas.getHeight());
                 end.x = canvas.getWidth() + 500;
             }
-
-            Paint p = new Paint();
-            p.setAntiAlias(true);
-            p.setColor(colorScheme.getRandom());
-            p.setStrokeWidth(random.nextFloat() * (maxWidth - minWidth) + minWidth);
             canvas.drawLine(start.x, start.y, end.x, end.y, p);
         }
     }

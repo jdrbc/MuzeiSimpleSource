@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static ca.jdr23bc.muzeisimplesource.Colour.ColorScheme.ColorSchemeAnalagous;
+import static ca.jdr23bc.muzeisimplesource.Colour.ColorScheme.ColorSchemeComplementary;
 import static ca.jdr23bc.muzeisimplesource.Colour.ColorScheme.ColorSchemeMonochromatic;
+import static ca.jdr23bc.muzeisimplesource.Colour.ColorScheme.ColorSchemeTriad;
 
 public class ColorScheme {
 
@@ -14,7 +17,7 @@ public class ColorScheme {
 
     public ColorScheme(int rootColor) {
         colors.add(rootColor);
-        int[] ints = Colour.colorSchemeOfType(rootColor, ColorSchemeMonochromatic);
+        int[] ints = Colour.colorSchemeOfType(rootColor, ColorSchemeComplementary);
         for (int index = 0; index < ints.length; index++) {
             colors.add(ints[index]);
         }
