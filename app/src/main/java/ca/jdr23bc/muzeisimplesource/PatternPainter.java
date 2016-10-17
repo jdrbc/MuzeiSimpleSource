@@ -65,12 +65,13 @@ public class PatternPainter {
         p.setAntiAlias(true);
         int minWidth = 25;
         int maxWidth = 150;
+        int alpha = random.nextInt(200);
         String direction = "vertical";
         String[] directions = new String[] {"vertical", "horizontal"};
         boolean sameColor = random.nextBoolean();
         if (sameColor) {
             p.setColor(colorScheme.getRandom());
-            p.setAlpha(random.nextInt(255));
+            p.setAlpha(alpha);
         }
         boolean sameDir = random.nextBoolean();
         if (sameDir) {
@@ -85,7 +86,7 @@ public class PatternPainter {
         for (int i = 0; i < num; i++) {
             if (!sameColor) {
                 p.setColor(colorScheme.getRandom());
-                p.setAlpha(random.nextInt(255));
+                p.setAlpha(alpha);
             }
             if (!sameDir) {
                 direction = directions[random.nextInt(2)];
