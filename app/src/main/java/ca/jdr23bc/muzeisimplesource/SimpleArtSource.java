@@ -3,14 +3,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Random;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.net.Uri;
 import android.support.v4.content.FileProvider;
@@ -82,6 +79,7 @@ public class SimpleArtSource extends MuzeiArtSource {
                 .byline("random background")
                 .imageUri(imgUri)
                 .build());
+        scheduleUpdate(System.currentTimeMillis() + ROTATE_TIME_MILLIS);
     }
 }
 

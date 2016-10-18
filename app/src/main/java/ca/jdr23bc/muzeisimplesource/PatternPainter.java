@@ -16,7 +16,7 @@ public class PatternPainter {
             Collections.unmodifiableList(Arrays.asList(Style.values()));
 
     public enum Style {
-        Lines, Dots
+        Lines, Dots, Grid
     }
     Canvas canvas;
     Style style;
@@ -36,6 +36,8 @@ public class PatternPainter {
             paintLines();
         } else if (style == Style.Dots) {
             paintDots();
+        } else if (style == Style.Grid) {
+            paintGrid();
         }
     }
 
@@ -108,6 +110,38 @@ public class PatternPainter {
                 end.x = canvas.getWidth() + 500;
             }
             canvas.drawLine(start.x, start.y, end.x, end.y, p);
+        }
+    }
+
+    public void paintGrid() {
+        Grid grid = new Grid(canvas, random.nextInt(10) + 2);
+
+        boolean drawSquares = random.nextBoolean();
+        if (drawSquares) {
+            grid.cellHieght = grid.cellWidth;
+        }
+        boolean drawBorder = random.nextBoolean();
+        Paint borderPaint = new Paint();
+        if (drawBorder) {
+            borderPaint.setStrokeWidth(random.nextFloat() * 30);
+            boolean blackBorder = random.nextBoolean();
+            if (blackBorder) {
+                borderPaint.setColor(Color.BLACK);
+            } else {
+                borderPaint.setColor(colorScheme.popRandom());
+            }
+            borderPaint.setStyle(Paint.Style.STROKE);
+        }
+
+        Paint p = new Paint();
+        p.setAntiAlias(true);
+        while(grid.hasNext()) {
+            Grid.Cell cell = grid.next();
+            p.setColor(colorScheme.getRandom());
+            cell.draw(canvas, p);
+            if (drawBorder) {
+                cell.draw(canvas, borderPaint);
+            }
         }
     }
 

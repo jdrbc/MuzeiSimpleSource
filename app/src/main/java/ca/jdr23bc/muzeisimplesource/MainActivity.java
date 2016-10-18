@@ -26,7 +26,6 @@ public class MainActivity extends Activity {
 
         public MyView(Context context) {
             super(context);
-            // TODO Auto-generated constructor stub
             gestureDetector = new GestureDetector(context, new GestureListener(this));
         }
 
@@ -37,9 +36,9 @@ public class MainActivity extends Activity {
 
         @Override
         protected void onDraw(Canvas canvas) {
-            // TODO Auto-generated method stub
             super.onDraw(canvas);
             PatternPainter pp = new PatternPainter(canvas);
+//            pp.style = PatternPainter.Style.Grid;
             pp.paint();
         }
 
