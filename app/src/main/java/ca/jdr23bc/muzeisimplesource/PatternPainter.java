@@ -3,7 +3,9 @@ package ca.jdr23bc.muzeisimplesource;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Point;
+import android.os.Build;
 import android.util.Log;
 
 import java.util.Arrays;
@@ -16,7 +18,7 @@ public class PatternPainter {
             Collections.unmodifiableList(Arrays.asList(Style.values()));
 
     public enum Style {
-        Lines, Dots, Grid
+        Lines, Dots, Grid, Triangles, TREE
     }
     Canvas canvas;
     Style style;
@@ -38,7 +40,30 @@ public class PatternPainter {
             paintDots();
         } else if (style == Style.Grid) {
             paintGrid();
+        } else if (style == Style.Triangles) {
+            paintTriangles();
+        } else if (style == Style.TREE) {
+            paintTree();
         }
+    }
+
+    public void paintTree() {
+        fillBackground();
+
+        Paint p = new Paint();
+        p.setAntiAlias(true);
+
+        Tree t = new Tree(canvas.getWidth(), canvas.getHeight());
+        t.minBranchWidth = random.nextInt(9) + 1;
+        t.maxBranchWidth = random.nextInt(300) + 50;
+        t.branchWidthStep = random.nextFloat() + 0.25f;
+        t.branchLength = random.nextInt(5) + 5;
+        t.leafCount = random.nextInt(100) + 20;
+
+        p.setColor(colorScheme.popRandom());
+        t.drawBranches(canvas, p);
+        p.setColor(colorScheme.popRandom());
+        t.drawLeaves(canvas, p);
     }
 
     public void paintDots() {
@@ -67,7 +92,7 @@ public class PatternPainter {
         p.setAntiAlias(true);
         int minWidth = 25;
         int maxWidth = 150;
-        int alpha = random.nextInt(200);
+        int alpha = Math.max(0, random.nextInt(200) - 100);
         String direction = "vertical";
         String[] directions = new String[] {"vertical", "horizontal"};
         boolean sameColor = random.nextBoolean();
@@ -142,6 +167,26 @@ public class PatternPainter {
             if (drawBorder) {
                 cell.draw(canvas, borderPaint);
             }
+        }
+    }
+
+    public void paintTriangles() {
+        Grid grid = new Grid(canvas, random.nextInt(4) + 2);
+
+        boolean drawSquares = random.nextBoolean();
+            grid.cellHieght = grid.cellWidth;
+        Paint borderPaint = new Paint();
+        borderPaint.setStrokeWidth(random.nextFloat() * 30);
+        borderPaint.setColor(Color.BLACK);
+        borderPaint.setStyle(Paint.Style.STROKE);
+
+        Paint p = new Paint();
+        p.setAntiAlias(true);
+        while(grid.hasNext()) {
+            p.setColor(colorScheme.getRandom());
+            Grid.Cell cell = grid.next();
+            cell.drawTriangles(canvas, p);
+            cell.drawTriangles(canvas, borderPaint);
         }
     }
 

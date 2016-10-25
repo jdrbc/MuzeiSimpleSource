@@ -9,9 +9,11 @@ import java.util.Random;
 public class ColorScheme {
 
     public List<Integer> colors = new ArrayList<>();
+    public Integer rootColor;
     Colour.ColorScheme csType;
 
     public ColorScheme(int rootColor) {
+        this.rootColor = rootColor;
         colors.add(rootColor);
         csType = Colour.getRandomScheme();
         int[] ints = Colour.colorSchemeOfType(rootColor, csType);
@@ -21,7 +23,11 @@ public class ColorScheme {
     }
 
     public int popRandom() {
-        return colors.remove(randIndex());
+        if (colors.size() > 0) {
+            return colors.remove(randIndex());
+        } else {
+            return rootColor;
+        }
     }
 
     public int getRandom() {

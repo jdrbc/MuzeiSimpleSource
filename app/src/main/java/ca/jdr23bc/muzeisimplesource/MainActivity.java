@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
             PatternPainter pp = new PatternPainter(canvas);
-//            pp.style = PatternPainter.Style.Grid;
+//            pp.style = PatternPainter.Style.TREE;
             pp.paint();
         }
 

@@ -25,6 +25,13 @@ public class Colour extends Color {
         return schemes[rand.nextInt(schemes.length)];
     }
 
+    public static int changeValue(int color, float factor) {
+        float[] hsv = new float[3];
+        Color.colorToHSV(color, hsv);
+        hsv[2] *= factor; // value component
+        return Color.HSVToColor(hsv);
+    }
+
     // ///////////////////////////////////
     // 4 Color Scheme from Color
     // ///////////////////////////////////
