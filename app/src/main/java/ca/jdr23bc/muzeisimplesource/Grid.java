@@ -63,7 +63,6 @@ public class Grid implements Iterator<Grid.Cell> {
         float height;
         float x;
         float y;
-        Rect rect;
 
         public Cell(float x, float y, Grid grid) {
             this.grid = grid;

@@ -18,7 +18,7 @@ public class PatternPainter {
             Collections.unmodifiableList(Arrays.asList(Style.values()));
 
     public enum Style {
-        Lines, Dots, Grid, Triangles, TREE
+        Lines, Dots, Grid, Dot_Grid, Triangles, Tree
     }
     Canvas canvas;
     Style style;
@@ -42,8 +42,10 @@ public class PatternPainter {
             paintGrid();
         } else if (style == Style.Triangles) {
             paintTriangles();
-        } else if (style == Style.TREE) {
+        } else if (style == Style.Tree) {
             paintTree();
+        } else if (style == Style.Dot_Grid) {
+            paintDotGrid();
         }
     }
 
@@ -58,12 +60,18 @@ public class PatternPainter {
         t.maxBranchWidth = random.nextInt(300) + 50;
         t.branchWidthStep = random.nextFloat() + 0.25f;
         t.branchLength = random.nextInt(5) + 5;
-        t.leafCount = random.nextInt(100) + 20;
+        t.leafCount = random.nextInt(100) + 50;
+        t.leafLength = (random.nextFloat() * 120) + 20;
+        t.leafWidthRatio = random.nextFloat() + 0.5f;
+        t.grow();
 
         p.setColor(colorScheme.popRandom());
         t.drawBranches(canvas, p);
-        p.setColor(colorScheme.popRandom());
-        t.drawLeaves(canvas, p);
+
+        if (random.nextBoolean() || true) {
+            p.setColor(colorScheme.popRandom());
+            t.drawLeaves(canvas, p);
+        }
     }
 
     public void paintDots() {
@@ -92,7 +100,7 @@ public class PatternPainter {
         p.setAntiAlias(true);
         int minWidth = 25;
         int maxWidth = 150;
-        int alpha = Math.max(0, random.nextInt(200) - 100);
+        int alpha = Math.max(255, random.nextInt(255) + 100);
         String direction = "vertical";
         String[] directions = new String[] {"vertical", "horizontal"};
         boolean sameColor = random.nextBoolean();
@@ -167,6 +175,32 @@ public class PatternPainter {
             if (drawBorder) {
                 cell.draw(canvas, borderPaint);
             }
+        }
+    }
+
+
+    public void paintDotGrid() {
+        int maxRadius = 75;
+        int minRadius = 10;
+
+        fillBackground();
+        Grid grid = new Grid(canvas.getWidth(), canvas.getHeight() + 125, random.nextInt(15) + 2);
+        grid.cellHieght = grid.cellWidth;
+        Paint p = new Paint();
+        p.setAntiAlias(true);
+        int radius = random.nextInt(maxRadius - minRadius) + minRadius;
+        boolean sameRadius = random.nextBoolean();
+        p.setColor(colorScheme.getRandom());
+        boolean sameColor = random.nextBoolean();
+        while(grid.hasNext()) {
+            Grid.Cell cell = grid.next();
+            if (!sameColor) {
+                p.setColor(colorScheme.getRandom());
+            }
+            if (!sameRadius) {
+                radius = random.nextInt(maxRadius - minRadius) + minRadius;
+            }
+            canvas.drawCircle(cell.x, cell.y, radius, p);
         }
     }
 

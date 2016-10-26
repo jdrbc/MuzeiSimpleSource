@@ -27,6 +27,9 @@ public class Tree {
     public int minBranchWidth = 5;
 
     public int leafCount = 100;
+    // Width to length ratio
+    public float leafWidthRatio = 1;
+    public float leafLength = 60f;
     public float branchWidthStep = 1f;
     public int maxBranchWidth = 200;
     public int branchLength = 10;
@@ -52,11 +55,6 @@ public class Tree {
     }
 
     public static PointF normalize(PointF p) {
-        Double len = getDist(p, new PointF(0, 0));
-        return new PointF(new Float(p.x / len), new Float(p.y / len));
-    }
-
-    public static PointF getNormal(PointF p) {
         Double len = getDist(p, new PointF(0, 0));
         return new PointF(new Float(p.x / len), new Float(p.y / len));
     }
@@ -96,8 +94,6 @@ public class Tree {
                 branches.add(currBranch);
             }
         }
-        Log.d(SimpleArtSource.TAG, "growing tree");
-        grow();
     }
 
     public void grow() {
@@ -247,10 +243,10 @@ public class Tree {
 
     public class Leaf {
         PointF pos;
-        int length = 60;
-        int width = 20;
+        Tree tree;
 
         public Leaf (Tree t) {
+            this.tree = t;
             this.pos = new PointF(t.rand.nextInt(t.maxWidth), t.rand.nextInt(t.maxHeight - t.rootHeight));
         }
 
@@ -259,12 +255,13 @@ public class Tree {
             leaf.moveTo(pos.x, pos.y);
 
             // Get vector from middle top of screen to the leaf to get tip of leaf
-            PointF top = new PointF(canvas.getWidth() / 2, -(canvas.getHeight()));
+            PointF top = new PointF(rand.nextInt(canvas.getWidth() / 2) + canvas.getWidth() / 4, -canvas.getHeight()/4);
             PointF topToPos = normalize(sub(pos, top));
-            PointF tip = add(pos, mult(topToPos, length));
-            PointF midTip = add(pos, mult(topToPos, length / 2));
+            PointF tip = add(pos, mult(topToPos, tree.leafLength));
+            PointF midTip = add(pos, mult(topToPos, tree.leafLength / 2));
 
             // Find sides
+            float width =  tree.leafLength * tree.leafWidthRatio;
             PointF side1 = add(midTip, mult(new PointF(-topToPos.y, topToPos.x), width/2));
             PointF side2 = add(midTip, mult(new PointF(topToPos.y, -topToPos.x), width/2));
 
