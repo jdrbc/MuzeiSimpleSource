@@ -18,7 +18,7 @@ public class PatternPainter {
             Collections.unmodifiableList(Arrays.asList(Style.values()));
 
     public enum Style {
-        Lines, Dots, Grid, Dot_Grid, Triangles, Tree, Dot_Grid_Overlay
+        Lines, Dots, Grid, Dot_Grid, Triangles, Tree
     }
     Canvas canvas;
     Style style;

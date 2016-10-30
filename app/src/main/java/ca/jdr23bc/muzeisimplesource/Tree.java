@@ -222,16 +222,9 @@ public class Tree {
         public Branch next() {
             PointF attractedDir = new PointF(dir.x, dir.y);
 
-//            Double distSums = 0.0;
-//            for (PointF attractor : attractors) {
-//                distSums += getDist(attractor, pos);
-//            }
-
             for (PointF attractor : attractors) {
-//                double dist = getDist(attractor, pos);
                 PointF dirToAttractor = sub(attractor, pos);
                 dirToAttractor = normalize(dirToAttractor);
-//                dirToAttractor = mult(dirToAttractor, dist / distSums);
                 attractedDir = add(attractedDir, dirToAttractor);
             }
 
