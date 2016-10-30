@@ -1,7 +1,5 @@
 package ca.jdr23bc.muzeisimplesource;
 
-import android.graphics.Color;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;

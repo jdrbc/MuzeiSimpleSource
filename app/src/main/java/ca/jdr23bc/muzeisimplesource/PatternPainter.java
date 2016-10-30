@@ -18,7 +18,7 @@ public class PatternPainter {
             Collections.unmodifiableList(Arrays.asList(Style.values()));
 
     public enum Style {
-        Lines, Dots, Grid, Dot_Grid, Triangles, Tree
+        Lines, Dots, Grid, Dot_Grid, Triangles, Tree, Dot_Grid_Overlay
     }
     Canvas canvas;
     Style style;
@@ -56,13 +56,6 @@ public class PatternPainter {
         p.setAntiAlias(true);
 
         Tree t = new Tree(canvas.getWidth(), canvas.getHeight());
-        t.minBranchWidth = random.nextInt(9) + 1;
-        t.maxBranchWidth = random.nextInt(300) + 50;
-        t.branchWidthStep = random.nextFloat() + 0.25f;
-        t.branchLength = random.nextInt(5) + 5;
-        t.leafCount = random.nextInt(100) + 50;
-        t.leafLength = (random.nextFloat() * 120) + 20;
-        t.leafWidthRatio = random.nextFloat() + 0.5f;
         t.grow();
 
         p.setColor(colorScheme.popRandom());
@@ -180,18 +173,21 @@ public class PatternPainter {
 
 
     public void paintDotGrid() {
+        fillBackground();
         int maxRadius = 75;
         int minRadius = 10;
 
-        fillBackground();
         Grid grid = new Grid(canvas.getWidth(), canvas.getHeight() + 125, random.nextInt(15) + 2);
         grid.cellHieght = grid.cellWidth;
         Paint p = new Paint();
         p.setAntiAlias(true);
-        int radius = random.nextInt(maxRadius - minRadius) + minRadius;
+        float radius = random.nextInt(maxRadius - minRadius) + minRadius;
         boolean sameRadius = random.nextBoolean();
         p.setColor(colorScheme.getRandom());
         boolean sameColor = random.nextBoolean();
+        boolean multiDot = random.nextBoolean();
+        int numMultiDot = random.nextInt(3) + 1;
+        float multiDotStep = Math.min(Math.max(random.nextFloat(), 0.25f), 0.95f);
         while(grid.hasNext()) {
             Grid.Cell cell = grid.next();
             if (!sameColor) {
@@ -201,6 +197,14 @@ public class PatternPainter {
                 radius = random.nextInt(maxRadius - minRadius) + minRadius;
             }
             canvas.drawCircle(cell.x, cell.y, radius, p);
+            if (multiDot) {
+                float multiDotRad = radius * multiDotStep;
+                for (int i = 0; i < numMultiDot; i++) {
+                    p.setColor(colorScheme.getRandom());
+                    canvas.drawCircle(cell.x, cell.y, multiDotRad, p);
+                    multiDotRad = multiDotStep * multiDotStep;
+                }
+            }
         }
     }
 

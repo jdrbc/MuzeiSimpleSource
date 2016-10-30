@@ -76,7 +76,7 @@ public class SimpleArtSource extends MuzeiArtSource {
         getApplicationContext().grantUriPermission("net.nurik.roman.muzei", imgUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         publishArtwork(new Artwork.Builder()
                 .title(pp.style.toString())
-                .byline("random background")
+                .byline(pp.colorScheme.csType.toString())
                 .imageUri(imgUri)
                 .build());
         scheduleUpdate(System.currentTimeMillis() + ROTATE_TIME_MILLIS);

@@ -24,15 +24,17 @@ public class Tree {
     public ArrayList<Leaf> leaves = new ArrayList<>();
     public ArrayList<Branch> branches = new ArrayList<>();
     public ArrayList<Branch> endBranches = new ArrayList<>();
-    public int minBranchWidth = 5;
+    public int leafCount;
 
-    public int leafCount = 100;
-    // Width to length ratio
-    public float leafWidthRatio = 1;
-    public float leafLength = 60f;
-    public float branchWidthStep = 1f;
-    public int maxBranchWidth = 200;
-    public int branchLength = 10;
+    // Width = leafLength * leafWidthRatio
+    public float leafWidthRatio;
+    public float leafLength;
+    // 0 = widest at start of leaf, 1 = widest at end of leaf
+    public float leafWidestPoint;
+    public float branchWidthStep;
+    public int minBranchWidth;
+    public int maxBranchWidth;
+    public int branchLength;
 
     public static Double getDist(PointF p1, PointF p2) {
         return Math.hypot(p1.x - p2.x, p1.y - p2.y);
@@ -64,6 +66,15 @@ public class Tree {
         this.maxHeight = maxHeight;
         int minRootHeight = maxHeight / 8;
         this.rootHeight = rand.nextInt(maxHeight / 4) + minRootHeight;
+
+        this.minBranchWidth = rand.nextInt(9) + 1;
+        this.maxBranchWidth = rand.nextInt(300) + 50;
+        this.branchWidthStep = rand.nextFloat() + 0.25f;
+        this.branchLength = rand.nextInt(5) + 5;
+        this.leafCount = rand.nextInt(100) + 50;
+        this.leafLength = (rand.nextFloat() * 80) + 40;
+        this.leafWidthRatio = rand.nextFloat() + 0.5f;
+        this.leafWidestPoint = Math.min(Math.max(rand.nextFloat(), 0.1f), 0.9f);
 
         // Create tree
         // Populate leaves
@@ -98,6 +109,8 @@ public class Tree {
 
     public void grow() {
         ArrayList<Leaf> freeLeaves = new ArrayList<>();
+        ArrayList<Branch> nearBranches = new ArrayList<>();
+        nearBranches.addAll(branches);
         freeLeaves.addAll(leaves);
 
         int lastBranchesToGrowCount = 0;
@@ -108,7 +121,7 @@ public class Tree {
                 Branch closestBranch = null;
                 double closestDist = 0;
                 // Find the closest branch
-                for (Branch branch : branches) {
+                for (Branch branch : nearBranches) {
                     double dist = getDist(leaf.pos, branch.pos);
 
                     if (dist < minDist) {
@@ -142,11 +155,14 @@ public class Tree {
 
             // Prune any connected leaves
             freeLeaves.removeAll(connectedLeaves);
+            nearBranches = new ArrayList<>();
 
             // Grow any attracted branches
             for (Branch branch : branchesToGrow) {
+                nearBranches.add(branch);
                 endBranches.remove(branch);
                 Branch next = branch.next();
+                nearBranches.add(next);
                 endBranches.add(next);
                 branches.add(next);
             }
@@ -175,8 +191,8 @@ public class Tree {
     public void drawLeaves(Canvas c, Paint p) {
         p.setStyle(Paint.Style.FILL_AND_STROKE);
         p.setAlpha(200);
-        for (Leaf leaf : leaves) {
-            leaf.draw(c, p);
+        for (Branch branch : endBranches) {
+            new Leaf(branch).draw(c, p);
         }
     }
 
@@ -206,16 +222,16 @@ public class Tree {
         public Branch next() {
             PointF attractedDir = new PointF(dir.x, dir.y);
 
-            Double distSums = 0.0;
-            for (PointF attractor : attractors) {
-                distSums += getDist(attractor, pos);
-            }
+//            Double distSums = 0.0;
+//            for (PointF attractor : attractors) {
+//                distSums += getDist(attractor, pos);
+//            }
 
             for (PointF attractor : attractors) {
-                double dist = getDist(attractor, pos);
+//                double dist = getDist(attractor, pos);
                 PointF dirToAttractor = sub(attractor, pos);
                 dirToAttractor = normalize(dirToAttractor);
-                dirToAttractor = mult(dirToAttractor, dist / distSums);
+//                dirToAttractor = mult(dirToAttractor, dist / distSums);
                 attractedDir = add(attractedDir, dirToAttractor);
             }
 
@@ -250,6 +266,11 @@ public class Tree {
             this.pos = new PointF(t.rand.nextInt(t.maxWidth), t.rand.nextInt(t.maxHeight - t.rootHeight));
         }
 
+        public Leaf (Branch b) {
+            this.tree = b.tree;
+            this.pos = b.pos;
+        }
+
         public void draw(Canvas canvas, Paint paint) {
             Path leaf = new Path();
             leaf.moveTo(pos.x, pos.y);
@@ -258,17 +279,13 @@ public class Tree {
             PointF top = new PointF(rand.nextInt(canvas.getWidth() / 2) + canvas.getWidth() / 4, -canvas.getHeight()/4);
             PointF topToPos = normalize(sub(pos, top));
             PointF tip = add(pos, mult(topToPos, tree.leafLength));
-            PointF midTip = add(pos, mult(topToPos, tree.leafLength / 2));
+            PointF midTip = add(pos, mult(topToPos, tree.leafLength * leafWidestPoint));
 
             // Find sides
             float width =  tree.leafLength * tree.leafWidthRatio;
-            PointF side1 = add(midTip, mult(new PointF(-topToPos.y, topToPos.x), width/2));
-            PointF side2 = add(midTip, mult(new PointF(topToPos.y, -topToPos.x), width/2));
+            PointF side1 = add(midTip, mult(new PointF(-topToPos.y, topToPos.x), width / 2));
+            PointF side2 = add(midTip, mult(new PointF(topToPos.y, -topToPos.x), width / 2));
 
-//            leaf.lineTo(side1.x, side1.y);
-//            leaf.lineTo(tip.x, tip.y);
-//            leaf.lineTo(side2.x, side2.y);
-//            leaf.lineTo(pos.x, pos.y);
             leaf.quadTo(side1.x, side1.y, tip.x, tip.y);
             leaf.quadTo(side2.x, side2.y, pos.x, pos.y);
             leaf.close();
