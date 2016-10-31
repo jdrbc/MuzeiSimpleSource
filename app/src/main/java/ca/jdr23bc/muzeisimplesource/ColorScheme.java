@@ -10,6 +10,16 @@ public class ColorScheme {
     public Integer rootColor;
     Colour.ColorScheme csType;
 
+    public ColorScheme(int rootColor, Colour.ColorScheme csType) {
+        this.rootColor = rootColor;
+        colors.add(rootColor);
+        this.csType = csType;
+        int[] ints = Colour.colorSchemeOfType(rootColor, csType);
+        for (int index = 0; index < ints.length; index++) {
+            colors.add(ints[index]);
+        }
+    }
+
     public ColorScheme(int rootColor) {
         this.rootColor = rootColor;
         colors.add(rootColor);

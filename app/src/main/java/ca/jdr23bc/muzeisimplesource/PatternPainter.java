@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.os.Build;
 import android.util.Log;
 
@@ -18,7 +19,7 @@ public class PatternPainter {
             Collections.unmodifiableList(Arrays.asList(Style.values()));
 
     public enum Style {
-        Lines, Dots, Grid, Dot_Grid, Triangles, Tree
+        Lines, Dots, Grid, Dot_Grid, Triangles, Tree, Star
     }
     Canvas canvas;
     Style style;
@@ -46,6 +47,49 @@ public class PatternPainter {
             paintTree();
         } else if (style == Style.Dot_Grid) {
             paintDotGrid();
+        } else if (style == Style.Star) {
+            paintStar();
+        }
+    }
+
+    public void paintStar() {
+        Log.d("jdr", colorScheme.csType.toString());
+        fillBackground();
+        Paint p = new Paint();
+        p.setAntiAlias(true);
+        p.setColor(colorScheme.getRandom());
+        float radius = canvas.getWidth() / 2;
+        float centerX = radius;
+        float centerY = canvas.getHeight() / 2;
+        int numPoints = Math.max(7, random.nextInt(250));
+        float strokeWidth = Math.max(70 / numPoints, 1.5f);
+        p.setStrokeWidth(strokeWidth);
+        float rotationStep = (float) (2*Math.PI/numPoints);
+        int skip = (numPoints / 4) + random.nextInt(numPoints / 2);
+        Log.d("numPoints, skip, ", numPoints + ", " + skip);
+
+        int count = 0;
+        int stepCount = 1;
+        float currAngle = (float) (Math.PI/4);
+        float currX = (float) (Math.cos(currAngle) * radius) + centerX;
+        float currY = (float) (Math.sin(currAngle) * radius) + centerY;
+        canvas.drawPoint(currX, currY, p);
+        while(count < numPoints) {
+            float nextAngle = (float) ((rotationStep * skip * stepCount + currAngle) % (2 * Math.PI));
+            float nextX = (float) (Math.cos(nextAngle) * radius) + centerX;
+            float nextY = (float) (Math.sin(nextAngle) * radius) + centerY;
+            canvas.drawLine(currX, currY, nextX, nextY, p);
+            float diff = Math.abs(nextAngle - currAngle);
+            if (diff < 0.0001) {
+                currAngle += rotationStep;
+                stepCount = 0;
+                nextX = (float) (Math.cos(currAngle) * radius) + centerX;
+                nextY = (float) (Math.sin(currAngle) * radius) + centerY;
+            }
+            currX = nextX;
+            currY = nextY;
+            stepCount++;
+            count++;
         }
     }
 
